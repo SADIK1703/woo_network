@@ -19,12 +19,12 @@ class Futures implements TransactionPrices {
     this.volume,
   );
 
-  factory Futures.fromMap(Map<dynamic, dynamic> map) {
+  factory Futures.fromMap(Map<String, dynamic> map) {
     return Futures(
       map["base"],
-      map["qoute"],
-      map["lastPrice"],
-      map["volume"],
+      map["quote"],
+      map["lastPrice"].toDouble(),
+      map["volume"].toDouble(),
     );
   }
 }

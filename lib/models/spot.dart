@@ -10,6 +10,7 @@ class Spot implements TransactionPrices {
   @override
   final double volume;
 
+  @override
   String get symbol => base + '/' + qoute;
 
   Spot(
@@ -19,10 +20,12 @@ class Spot implements TransactionPrices {
     this.volume,
   );
 
-  factory Spot.fromMap(Map<dynamic, dynamic> map) {
+  factory Spot.fromMap(Map<String, dynamic> map) {
+    if (map["base"] == null) print('base');
+    if (map["quote"] == null) print('quote');
     return Spot(
       map["base"],
-      map["qoute"],
+      map["quote"],
       map["lastPrice"],
       map["volume"],
     );

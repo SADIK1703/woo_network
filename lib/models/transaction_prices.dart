@@ -4,6 +4,8 @@ abstract class TransactionPrices {
   final double lastPrice;
   final double volume;
 
+  String get symbol;
+
   TransactionPrices({
     required this.base,
     required this.qoute,
