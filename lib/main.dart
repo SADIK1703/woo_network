@@ -1,7 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:woo_network/controllers/primary_tab_state_controller.dart';
+import 'package:woo_network/controllers/search_controller.dart';
+import 'package:woo_network/controllers/sort_controller.dart';
+import 'package:woo_network/controllers/table_list_data_store_controller.dart';
+import 'package:woo_network/views/search_input_area.dart';
 
-void main() {
-  runApp(const MyApp());
+import 'core/init/injection_container.dart' as dependency_injection;
+
+void main() async {
+  await dependency_injection.init();
+  runApp(MultiProvider(providers: [
+    ChangeNotifierProvider<TableListDataStoreController>(create: (_) => TableListDataStoreController()),
+    ChangeNotifierProvider<PrimaryTabController>(create: (_) => PrimaryTabController()),
+    ChangeNotifierProvider<SearchController>(create: (_) => SearchController()),
+    ChangeNotifierProvider<SortController>(create: (_) => SortController()),
+  ], child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -14,53 +28,11 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
-          ],
+      home: const SafeArea(
+        child: Scaffold(
+          backgroundColor: Colors.black,
+          body: SearchInputArea(),
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
       ),
     );
   }

@@ -6,16 +6,28 @@ import 'package:woo_network/models/transaction_prices.dart';
 
 class TableListDataStoreController extends ChangeNotifier {
   TableListDataStoreController() {
+    setDefaultTransactionList();
+    setCurrentTransactionPriceList = defaultTransactionPriceList;
+  }
+  final List<TransactionPrices> currentTransactionPriceList = [];
+
+  set setCurrentTransactionPriceList(List<TransactionPrices> transactionPriceList) {
+    currentTransactionPriceList.clear();
+    currentTransactionPriceList.addAll(transactionPriceList);
+    notifyListeners();
+  }
+
+  void setDefaultTransactionList() {
     for (var transactionItem in mockTableData) {
       if (transactionItem["type"] == 'SPOT') {
         Spot spotTypeTransactionPrice = Spot.fromMap(transactionItem);
-        transactionPriceList.add(spotTypeTransactionPrice);
+        defaultTransactionPriceList.add(spotTypeTransactionPrice);
       } else if (transactionItem["type"] == "FUTURES") {
         Futures futuresTypeTransactionPrice = Futures.fromMap(transactionItem);
-        transactionPriceList.add(futuresTypeTransactionPrice);
+        defaultTransactionPriceList.add(futuresTypeTransactionPrice);
       }
     }
   }
 
-  List<TransactionPrices> transactionPriceList = [];
+  List<TransactionPrices> defaultTransactionPriceList = [];
 }
