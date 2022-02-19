@@ -1,4 +1,4 @@
-const List<Map> mockTableData = [
+const List<Map<String, dynamic>> mockTableData = [
   {
     "base": 'BTC',
     "quote": 'USDT',
