@@ -16,7 +16,6 @@ class SearchController extends ChangeNotifier {
   void search(String searchText) {
     searchedText = searchText;
     setSearchedList();
-    notifyListeners();
   }
 
   void setSearchedList() {
@@ -36,9 +35,11 @@ class SearchController extends ChangeNotifier {
             )
             .toList(),
       );
+      serviceLocator<SortController>().applySort();
       serviceLocator<TableListDataStoreController>().setCurrentTransactionPriceList = searchedList;
       searchedTransactionList = searchedList;
     } else {
+
       serviceLocator<SortController>().applySort();
     }
     notifyListeners();

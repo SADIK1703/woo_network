@@ -4,7 +4,7 @@ import 'package:woo_network/controllers/primary_tab_state_controller.dart';
 import 'package:woo_network/controllers/search_controller.dart';
 import 'package:woo_network/controllers/sort_controller.dart';
 import 'package:woo_network/controllers/table_list_data_store_controller.dart';
-import 'package:woo_network/views/search_input_area.dart';
+import 'package:woo_network/views/table_tab_view.dart';
 
 import 'core/init/injection_container.dart' as dependency_injection;
 
@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
       home: const SafeArea(
         child: Scaffold(
           backgroundColor: Colors.black,
-          body: SearchInputArea(),
+          body: TableTabView(),
         ),
       ),
     );

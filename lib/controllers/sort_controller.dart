@@ -1,17 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:woo_network/controllers/primary_tab_state_controller.dart';
 import 'package:woo_network/controllers/table_list_data_store_controller.dart';
+import 'package:woo_network/core/helpers/primary_tab_type.dart';
 import 'package:woo_network/core/helpers/sort_type.dart';
 import 'package:woo_network/core/helpers/tab_type.dart';
 import 'package:woo_network/core/init/injection_container.dart';
-import 'package:woo_network/models/spot.dart';
 import 'package:woo_network/models/transaction_prices.dart';
 
 class SortController extends ChangeNotifier {
-  SortController() {
-    applySort();
+
+  SortController(){
+    if(serviceLocator<PrimaryTabController>().selectedPrimaryTabType == PrimaryTabType.all){
+      
+    }
   }
+
   SortType _selectedSortType = SortType.defaultSort;
-  TabType selectedTabType = TabType.symbol;
+  TabType _selectedTabType = TabType.symbol;
   List<TransactionPrices> sortedTransactionPriceList = [];
 
   SortType get selectedSortType => _selectedSortType;
@@ -21,13 +26,20 @@ class SortController extends ChangeNotifier {
     notifyListeners();
   }
 
+  TabType get selectedTabType => _selectedTabType;
+
+  set setSelectedTabType(TabType tabType) {
+    _selectedTabType = tabType;
+    notifyListeners();
+  }
+
   void resetSorts() {
     setSelectedSortType = SortType.defaultSort;
     notifyListeners();
   }
 
   void setSort(TabType clickedTabType) {
-    if (clickedTabType == selectedTabType) {
+    if (clickedTabType == _selectedTabType) {
       changeSortType();
     } else {
       selectChangeTabType(clickedTabType);
@@ -46,25 +58,26 @@ class SortController extends ChangeNotifier {
         setSelectedSortType = SortType.defaultSort;
         break;
     }
+    applySort();
   }
 
   void selectChangeTabType(TabType newTabType) {
-    selectedTabType = newTabType;
+    _selectedSortType = SortType.defaultSort;
+    _selectedTabType = newTabType;
     notifyListeners();
   }
 
   void applySort() {
     sortedTransactionPriceList.clear();
     List<TransactionPrices> transactionPriceList = TableListDataStoreController().currentTransactionPriceList;
-    switch (selectedTabType) {
+    switch (_selectedTabType) {
       case TabType.symbol:
         switch (selectedSortType) {
           case SortType.defaultSort:
             sortedTransactionPriceList.addAll(
-              priorTransactionPriceList(transactionPriceList),
+              _priorTransactionPriceList(transactionPriceList),
             );
-            sortedTransactionPriceList.add(Spot('1', '1', 1.0, 1.0));
-            sortedTransactionPriceList.addAll(nonpriorTransactionPriceList(transactionPriceList));
+            sortedTransactionPriceList.addAll(_nonpriorTransactionPriceList(transactionPriceList));
             break;
           case SortType.ascendingSort:
             List<TransactionPrices> willSortList = transactionPriceList;
@@ -82,18 +95,18 @@ class SortController extends ChangeNotifier {
         switch (selectedSortType) {
           case SortType.defaultSort:
             sortedTransactionPriceList.addAll(
-              priorTransactionPriceList(transactionPriceList),
+              _priorTransactionPriceList(transactionPriceList),
             );
-            sortedTransactionPriceList.addAll(nonpriorTransactionPriceList(transactionPriceList));
+            sortedTransactionPriceList.addAll(_nonpriorTransactionPriceList(transactionPriceList));
             break;
           case SortType.ascendingSort:
             List<TransactionPrices> willSortList = transactionPriceList;
-            willSortList.sort(ascendingTransectionPriceLastPriceSort);
+            willSortList.sort(_ascendingTransectionPriceLastPriceSort);
             sortedTransactionPriceList = willSortList;
             break;
           case SortType.desccendingSort:
             List<TransactionPrices> willSortList = transactionPriceList;
-            willSortList.sort(descendingTransectionPriceLastPriceSort);
+            willSortList.sort(_descendingTransectionPriceLastPriceSort);
             sortedTransactionPriceList = willSortList;
             break;
         }
@@ -102,25 +115,24 @@ class SortController extends ChangeNotifier {
         switch (selectedSortType) {
           case SortType.defaultSort:
             sortedTransactionPriceList.addAll(
-              priorTransactionPriceList(transactionPriceList),
+              _priorTransactionPriceList(transactionPriceList),
             );
-            sortedTransactionPriceList.addAll(nonpriorTransactionPriceList(transactionPriceList));
+            sortedTransactionPriceList.addAll(_nonpriorTransactionPriceList(transactionPriceList));
             break;
           case SortType.ascendingSort:
             List<TransactionPrices> willSortList = transactionPriceList;
-            willSortList.sort(ascendingTransectionPriceVolumeSort);
+            willSortList.sort(_ascendingTransectionPriceVolumeSort);
             sortedTransactionPriceList = willSortList;
             break;
           case SortType.desccendingSort:
             List<TransactionPrices> willSortList = transactionPriceList;
-            willSortList.sort(descendingTransectionPriceVolumeSort);
+            willSortList.sort(_descendingTransectionPriceVolumeSort);
             sortedTransactionPriceList = willSortList;
             break;
         }
     }
-    notifyListeners();
-
     serviceLocator<TableListDataStoreController>().setCurrentTransactionPriceList = sortedTransactionPriceList;
+    notifyListeners();
   }
 
   /// ascending sort by symbol
@@ -144,31 +156,31 @@ class SortController extends ChangeNotifier {
   }
 
   /// ascending sort by lastPrice
-  int ascendingTransectionPriceLastPriceSort(
+  int _ascendingTransectionPriceLastPriceSort(
       TransactionPrices firstTransactionPrice, TransactionPrices secondTransactionPrice) {
     return firstTransactionPrice.lastPrice.compareTo(secondTransactionPrice.lastPrice);
   }
 
   /// descending sort by lastPrice
-  int descendingTransectionPriceLastPriceSort(
+  int _descendingTransectionPriceLastPriceSort(
       TransactionPrices firstTransactionPrice, TransactionPrices secondTransactionPrice) {
-    return firstTransactionPrice.lastPrice.compareTo(secondTransactionPrice.lastPrice);
+    return secondTransactionPrice.lastPrice.compareTo(firstTransactionPrice.lastPrice);
   }
 
   /// ascending sort by volume
-  int ascendingTransectionPriceVolumeSort(
+  int _ascendingTransectionPriceVolumeSort(
       TransactionPrices firstTransactionPrice, TransactionPrices secondTransactionPrice) {
     return firstTransactionPrice.volume.compareTo(secondTransactionPrice.volume);
   }
 
   /// descending sort by volume
-  int descendingTransectionPriceVolumeSort(
+  int _descendingTransectionPriceVolumeSort(
       TransactionPrices firstTransactionPrice, TransactionPrices secondTransactionPrice) {
-    return firstTransactionPrice.volume.compareTo(secondTransactionPrice.volume);
+    return secondTransactionPrice.volume.compareTo(firstTransactionPrice.volume);
   }
 
   /// select for non-prior transactions
-  List<TransactionPrices> nonpriorTransactionPriceList(List<TransactionPrices> transactionPriceList) {
+  List<TransactionPrices> _nonpriorTransactionPriceList(List<TransactionPrices> transactionPriceList) {
     var ret = transactionPriceList
         .where((element) => (element.base != "BTC" && element.base != "ETH" && element.base != "WOO"))
         .toList();
@@ -177,7 +189,7 @@ class SortController extends ChangeNotifier {
   }
 
   /// select for prior transactions
-  List<TransactionPrices> priorTransactionPriceList(List<TransactionPrices> transactionPriceList) {
+  List<TransactionPrices> _priorTransactionPriceList(List<TransactionPrices> transactionPriceList) {
     var ret = transactionPriceList
         .where((element) => (element.base == "BTC" || element.base == "ETH" || element.base == "WOO"))
         .toList();

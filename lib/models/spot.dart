@@ -21,8 +21,6 @@ class Spot implements TransactionPrices {
   );
 
   factory Spot.fromMap(Map<String, dynamic> map) {
-    if (map["base"] == null) print('base');
-    if (map["quote"] == null) print('quote');
     return Spot(
       map["base"],
       map["quote"],

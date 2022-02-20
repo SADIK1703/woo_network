@@ -6,7 +6,8 @@ class TransactionPriceLabel extends StatelessWidget {
   final TransactionPrices transactionPrice;
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [

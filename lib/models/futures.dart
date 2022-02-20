@@ -10,6 +10,7 @@ class Futures implements TransactionPrices {
   @override
   final double volume;
 
+  @override
   String get symbol => base + '-' + qoute;
 
   Futures(
